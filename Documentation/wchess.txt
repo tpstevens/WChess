@@ -1,0 +1,188 @@
+################################################################################
+Feature List
+--------------------------------------------------------------------------------
+Game Types
+- play local game (player controls both sides, can undo/redo as much as desired)
+- play networked (LAN) game hosted on one player's machine
+- with either type of game, be able to load game from standard notation format
+
+Input
+- type command (in chess notation)
+- left-click to select piece (optionally toggle showing move possibilities) and
+  right-click to move (is this how POE does it, or must the player always have
+  someone selected?)
+- hold left-click and move (doesn't move piece immediately, but indicator 
+  showing where piece will go? actual move would be animated)
+- optional (setting): confirm move, possibly after showing the new threatmap
+
+Other Features
+- use analytics (either Unity's or my own) to track what features get used, etc
+
+################################################################################
+UI Layout
+--------------------------------------------------------------------------------
+Main Menu Functionality:
+- start game with someone else (either a new game or from a saved match)
+- play alone, with or without ability to use move analyzer
+- view all past played games (stats, opening tendencies, etc)
+- settings
+- exit
+
+Main Menu Layout:
+- Local Game
+  - New Game
+  - Continue
+  - Load Game
+- Network Game
+  - Host Game
+    - New Game
+    - Continue
+    - Load Game
+  - Join Game
+- History/Statistics
+- Settings
+- Exit
+
+"Local Game" and "Host Game" can progress to the same menu, but the "Local Game"
+path will progress directly to the game loading screen while the "Host Game" 
+path leads to a "Waiting for players" screen with the current IP/Port. 
+Alternatively, the loading screen could be similar with additional UI elements
+if the hosting player is waiting for someone to join.
+
+################################################################################
+Notes
+--------------------------------------------------------------------------------
+- need to separate game logic from presentation (use PieceModel class for 
+  movement and Piece class for actual logic?)
+- if player undoes move, should the piece actually travel backwards?
+- do MonoBehaviours in a scene need to be public in a namespace?
+- build it like this and then run it through a code smeller
+
+Move Validation:
+- After each move, all potential moves are recalculated and cached (in Piece, if
+  not using AI)
+- Player must choose from those moves
+- To calculate moves for each piece: 
+  - for each "physically" possible move: move piece, then check physically possible
+    moves of opposing pieces and see if they can take the king
+
+* both sides initialized with physical moves (don't care about check) *
+- for all P1 available moves (which are physical):
+    - make the move temporarily (don't add to game history)
+    - recalculate P2 moves (figure out changes and then apply to base set) (just the ones affected by the potential move)
+      and see if any put P1 in check (P2 move ends at king)
+		- if not, add the move to P1's allowed set
+    - undo the move and remove changes to P2's available move cache
+	- replace P1's physical moves with allowed set
+- after making a move, recalculate available moves for both players where affected
+  (neither counting check from opposing player, so just adding/taking away physical moves)
+  and then generating P2's actual moves by making each physical move temporarily, recalculating P1 moves, etc)
+- then once player makes a move, just need to check if it's in the allowed moves for their side
+	
+- remember to take into account moves like castling when checking if piece threats have changed
+
+################################################################################
+Class Hierarchy - where does menu, overall app state, etc go?
+--------------------------------------------------------------------------------
+namespace WChess
+{
+    ////////////////////////////////////////////////////////////////////////////
+    // Namespaces
+    ////////////////////////////////////////////////////////////////////////////
+    
+    namespace Chess
+    {
+        ////////////////////////////////////////////////////////////////////////
+        // Public Classes
+        ////////////////////////////////////////////////////////////////////////
+        
+        public class Game {
+            public List<Move> getAvailableMoves(int teamID);
+            public List<Move> getAvailableMoves(Vector2I position, int teamID = -1);
+            public List<Move> makeMove(Vector2I origin, Vector2I target); // use out to determine validity?
+            public List<Move> undoMove(uint count = 1);
+            public bool       validateMove(Vector2I origin, Vector2I target);
+        }
+        
+        public class Move {
+        
+        }
+        
+        ////////////////////////////////////////////////////////////////////////
+        // Private Classes (need to be private within Game.cs for actual privacy)
+        ////////////////////////////////////////////////////////////////////////
+        
+		// checks if a certain move is valid 
+		private class MoveValidator {
+		
+		}
+		
+        // if this is private, then Game needs to have a constructor with a 
+        //   filename or a function for loading state from a file
+        private class GameHistory {
+            
+        }
+        
+        private class Piece {
+        
+        }
+    }
+    
+    // Wrapper around Unity's low-level network API
+    namespace Network
+    {
+        
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // Public Classes
+    ////////////////////////////////////////////////////////////////////////////
+    
+    public class ApplicationStateManager {
+        - singleton or persists through scenes (but then how to open up test scene
+          without going through the menu?)
+        - handles big state changes like going from menu to game, setting args, 
+          etc
+        - could implement as a singleton (if no state set, gets from current
+          scene)
+    }
+    
+    // Connects the internal game state with the piece models
+    public class GameManager : MonoBehaviour {
+        needs reset function (no sense in loading everything again to start a 
+        new game...even network stuff?)
+    }
+    
+    public class InputManager : MonoBehaviour {
+    
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // Private Classes
+    ////////////////////////////////////////////////////////////////////////////
+    
+    // Wrapper around Unity's log (private class in UnityManager?)
+    private class EventLog {
+    
+    }
+    
+    // Maps file paths, retrieves files, etc
+    private class FileUtilities {
+    
+    }
+    
+    // do we want this to be accessible to anything other than the GameManager?
+    private class PieceModel : MonoBehaviour {
+    
+    }
+    
+    // wrapper around Unity functions like scene loading, time scale, etc
+    // implement as a Singleton or as a MonoBehaviour in scene? If as a 
+    //   MonoBehaviour, we don't need to clear state upon reload...same for Log
+    //   However, UnityManager could wrap around Log and to handle clearing it
+    //   if the UnityManager is a MonoBehaviour...
+    // Should make ApplicatuonManager handle all the UnityManager stuff?
+    private class UnityManager {
+    
+    }
+}

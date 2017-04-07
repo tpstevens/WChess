@@ -40,6 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Move.cs" />
+    <Compile Include="Pawn.cs" />
+    <Compile Include="Piece.cs" />
+    <Compile Include="Utilities.cs" />
+    <Compile Include="Vectors.cs" />
+    <Compile Include="Game.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
