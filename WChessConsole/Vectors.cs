@@ -9,18 +9,51 @@
 			this.x = x;
 			this.y = y;
 		}
-	}
 
-	struct Vector2UI
-	{
-		public uint x, y;
+        public override bool Equals(object obj)
+        {
+            return (obj is Vector2I && (this == (Vector2I)(obj)));
+        }
 
-		public Vector2UI(uint x, uint y)
-		{
-			this.x = x;
-			this.y = y;
-		}
-	}
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return string.Format("({0}, {1})", x, y);
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        // Operators
+        ////////////////////////////////////////////////////////////////////////
+
+        public static Vector2I operator+(Vector2I a, Vector2I b)
+        {
+            return new Vector2I(a.x + b.x, a.y + b.y);
+        }
+
+        public static Vector2I operator*(Vector2I v, int i)
+        {
+            return new Vector2I(v.x * i, v.y * i);
+        }
+
+        public static Vector2I operator*(int i, Vector2I v)
+        {
+            return new Vector2I(v.x * i, v.y * i);
+        }
+
+        public static bool operator==(Vector2I a, Vector2I b)
+        {
+            return (a.x == b.x) && (a.y == b.y);
+        }
+
+        public static bool operator!=(Vector2I a, Vector2I b)
+        {
+            return !(a == b);
+        }
+    }
 
 	struct Pair<T>
 	{

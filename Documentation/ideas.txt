@@ -1,0 +1,51 @@
+want to separate piece logic into classes
+can give them access to an interface of the board
+pieces need way to get access to their environment
+for AI purposes, we'll want to consolidate all potential moves...may not be important for this though
+
+Move types:
+slide - all squares in path must be open, piece may capture enemy on end square
+jump - only destination must be open or enemy
+
+Pawn:
+Slide one square ahead
+	- cannot capture
+Slide two squares ahead
+	- cannot capture
+	- must be on piece's first move
+En passant - move forward-diagonally by one square 
+	- last enemy move must have been pawn sliding 2 squares to land adjacent to this piece
+Promotion
+	- required consequence of moving to last row
+	- cannot promote to pawn or king
+
+Knight:
+Jump two squares in one dimension, one square in other dimension
+
+Bishop:
+Slide along diagonals
+
+Rook:
+Slide along ranks/files
+
+Queen:
+Slide along diagonals
+Slide along rank/files
+
+King:
+Slide along diagonals (limit 1)
+Slide along rank/files (limit 1)
+Castle
+	- must be king's first move
+	- must be corresponding rook's first move
+	- king must not be in check or pass over any threatened squares
+
+MovementAbility
+{
+	public List<Vector2I> directions;
+	public List<int> limits;
+}
+
+
+INSTEAD OF ADDING ALL SORTS OF VARIABLES/FLAGS TO MOVE CLASS, SUBCLASS AND ADD makemove(Game) AND toString() FUNCTIONS 
+top-level base class would have origin and destination for easy comparisons? add MoveFactory(Game game, string move) to calculate special things from algebraic notation)

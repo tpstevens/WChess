@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace WChessConsole
 {
 	class Game
 	{
 		private Piece[,] board;
+        private Stack<Move> moveHistory;
 		private uint nextTeamID = 0;
 		private uint turnNumber = 0;
 
@@ -15,11 +17,12 @@ namespace WChessConsole
 		public Game(uint width, uint height)
 		{
 			board = new Piece[width, height];
+            moveHistory = new Stack<Move>();
 
-			for (uint x = 0; x < width; ++x)
+			for (int x = 0; x < width; ++x)
 			{
-				board[x, 1] = new Pawn(this, 0, new Vector2UI(x, 1));
-				board[x, height - 2] = new Pawn(this, 1, new Vector2UI(x, height - 2));
+				board[x, 1] = PieceFactory.CreatePawn(0, new Vector2I(x, 1));
+				board[x, height - 2] = PieceFactory.CreatePawn(1, new Vector2I(x, (int)height - 2));
 			}
 		}
 
@@ -27,12 +30,22 @@ namespace WChessConsole
 		// Public methods
 		////////////////////////////////////////////////////////////////////////
 
-		public Piece GetPiece(uint x, uint y)
-		{
-			return validatePosition(x, y) ? board[x, y] : null;
-		}
+        public void CalculatePotentialMoves()
+        {
+            // TODO - for displaying threats...
+        }
 
-		public Piece GetPiece(Vector2UI position)
+        public Move GetLastMove()
+        {
+            return moveHistory.Count > 0 ? moveHistory.Peek() : null;
+        }
+
+        public Piece GetPiece(int x, int y)
+        {
+            return board[x, y];
+        }
+
+		public Piece GetPiece(Vector2I position)
 		{
 			return validatePosition(position) ? board[position.x, position.y] : null;
 		}
@@ -43,14 +56,14 @@ namespace WChessConsole
 			return false;
 		}
 
-		public bool MakeMove(Vector2UI origin, Vector2UI destination)
+		public bool MakeMove(Vector2I origin, Vector2I destination)
 		{
 			Move move;
 			Piece piece;
 
 			if ((piece = GetPiece(origin)) != null
-				&& piece.teamID == nextTeamID
-				&& (move = piece.ValidateMove(destination)) != null)
+				&& piece.TeamID == nextTeamID
+				&& (move = piece.ValidateMove(this, destination)) != null)
 			{
 				// Remove enemy piece if captured - TODO
 				
@@ -73,35 +86,17 @@ namespace WChessConsole
 		{
 			int width = board.GetLength(0);
 			int height = board.GetLength(1);
+            Piece piece;
 			string emptyRow = "";
 			string result = "";
-			string[,] pieces = new string[width, height];
 
 			// fill in the empty row
 			emptyRow = "|";
 			for (int i = 0; i < width; ++i)
 				emptyRow += "--|";
 
-			// Print whose turn it is
+			// print whose turn it is
 			result += string.Format("Turn {0}: {1} to move\n", turnNumber + 1, nextTeamID == 0 ? "white" : "black");
-
-			// convert each piece into its character representation
-			for (int x = 0; x < width; x++)
-			{
-				for (int y = 0; y < height; y++)
-				{
-					Piece piece = GetPiece((uint)x, (uint)y);
-
-					if (piece != null)
-					{
-						pieces[x, y] = piece.GetTwoCharRepresentation();
-					}
-					else
-					{
-						pieces[x, y] = "  ";
-					}
-				}
-			}
 
 			for (int y = height - 1; y >= 0; --y)
 			{
@@ -110,7 +105,8 @@ namespace WChessConsole
 
 				for (int x = 0; x < width; ++x)
 				{
-					result += pieces[x, y] + "|";
+                    piece = GetPiece(x, y);
+                    result += string.Format("{0}|", piece != null ? piece.GetTwoCharRepresentation() : "  ");
 				}
 
 				result += "\n";
@@ -126,15 +122,16 @@ namespace WChessConsole
 		// Private methods
 		////////////////////////////////////////////////////////////////////////
 
-		private bool validatePosition(uint x, uint y)
+		private bool validatePosition(int x, int y)
 		{
-			return x < board.GetLength(0) && y < board.GetLength(1);
+			return x >= 0 && x < board.GetLength(0) 
+                && y >= 0 && y < board.GetLength(1);
 		}
 
-		private bool validatePosition(Vector2UI position)
+		private bool validatePosition(Vector2I position)
 		{
-			return position.x < board.GetLength(0) 
-				&& position.y < board.GetLength(1);
+			return position.x >= 0 && position.x < board.GetLength(0) 
+				&& position.y >= 0 && position.y < board.GetLength(1);
 		}
 	}
 }

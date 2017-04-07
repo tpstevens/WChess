@@ -25,11 +25,11 @@ namespace WChessConsole
 		{
 			bool continueGame = true;
 			bool validInput = false;
-			Pair<Vector2UI> positionPair;
+			Pair<Vector2I> positionPair;
 			string input;
 			string[] splitInput;
 
-			positionPair = new Pair<Vector2UI>();
+			positionPair = new Pair<Vector2I>();
 
 			do
 			{
@@ -66,17 +66,17 @@ namespace WChessConsole
 			return continueGame;
 		}
 
-		private static bool parsePosition(string positionString, out Vector2UI positionVector)
+		private static bool parsePosition(string positionString, out Vector2I positionVector)
 		{
 			string[] ints = positionString.Trim().Split(',');
 			if (ints.Length == 2)
 			{
-				positionVector = new Vector2UI(uint.Parse(ints[0]) - 1, uint.Parse(ints[1]) - 1);
+				positionVector = new Vector2I(int.Parse(ints[0]) - 1, int.Parse(ints[1]) - 1);
 				return true;
 			}
 			else
 			{
-				positionVector = new Vector2UI(uint.MaxValue, uint.MaxValue);
+				positionVector = new Vector2I(int.MaxValue, int.MaxValue);
 				return false;
 			}
 		}
