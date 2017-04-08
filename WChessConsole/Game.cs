@@ -19,11 +19,38 @@ namespace WChessConsole
 			board = new Piece[width, height];
             moveHistory = new Stack<Move>();
 
+			// add pawns
 			for (int x = 0; x < width; ++x)
 			{
-				board[x, 1] = PieceFactory.CreatePawn(0, new Vector2I(x, 1));
-				board[x, height - 2] = PieceFactory.CreatePawn(1, new Vector2I(x, (int)height - 2));
+				board[x, 1] = PieceFactory.CreateClassicPawn(0, new Vector2I(x, 1));
+				board[x, height - 2] = PieceFactory.CreateClassicPawn(1, new Vector2I(x, (int)height - 2));
 			}
+
+			// add knights
+			board[1, 0] = PieceFactory.CreateClassicKnight(0, new Vector2I(1, 0));
+			board[6, 0] = PieceFactory.CreateClassicKnight(0, new Vector2I(6, 0));
+			board[1, 7] = PieceFactory.CreateClassicKnight(1, new Vector2I(1, 7));
+			board[6, 7] = PieceFactory.CreateClassicKnight(1, new Vector2I(6, 7));
+
+			// add bishops
+			board[2, 0] = PieceFactory.CreateClassicBishop(0, new Vector2I(2, 0));
+			board[5, 0] = PieceFactory.CreateClassicBishop(0, new Vector2I(5, 0));
+			board[2, 7] = PieceFactory.CreateClassicBishop(1, new Vector2I(2, 7));
+			board[5, 7] = PieceFactory.CreateClassicBishop(1, new Vector2I(5, 7));
+
+			// add rooks
+			board[0, 0] = PieceFactory.CreateClassicRook(0, new Vector2I(0, 0));
+			board[7, 0] = PieceFactory.CreateClassicRook(0, new Vector2I(7, 0));
+			board[0, 7] = PieceFactory.CreateClassicRook(1, new Vector2I(0, 7));
+			board[7, 7] = PieceFactory.CreateClassicRook(1, new Vector2I(7, 7));
+
+			// add queens
+			board[3, 0] = PieceFactory.CreateClassicQueen(0, new Vector2I(3, 0));
+			board[3, 7] = PieceFactory.CreateClassicQueen(1, new Vector2I(3, 7));
+
+			// add kings
+			board[4, 0] = PieceFactory.CreateClassicKing(0, new Vector2I(4, 0));
+			board[4, 7] = PieceFactory.CreateClassicKing(1, new Vector2I(4, 7));
 		}
 
 		////////////////////////////////////////////////////////////////////////
@@ -47,7 +74,7 @@ namespace WChessConsole
 
 		public Piece GetPiece(Vector2I position)
 		{
-			return validatePosition(position) ? board[position.x, position.y] : null;
+			return ValidatePosition(position) ? board[position.x, position.y] : null;
 		}
 
 		public bool MakeMove(string move)
@@ -118,19 +145,15 @@ namespace WChessConsole
 			return result;
 		}
 
-		////////////////////////////////////////////////////////////////////////
-		// Private methods
-		////////////////////////////////////////////////////////////////////////
-
-		private bool validatePosition(int x, int y)
+		public bool ValidatePosition(int x, int y)
 		{
-			return x >= 0 && x < board.GetLength(0) 
-                && y >= 0 && y < board.GetLength(1);
+			return x >= 0 && x < board.GetLength(0)
+				&& y >= 0 && y < board.GetLength(1);
 		}
 
-		private bool validatePosition(Vector2I position)
+		public bool ValidatePosition(Vector2I position)
 		{
-			return position.x >= 0 && position.x < board.GetLength(0) 
+			return position.x >= 0 && position.x < board.GetLength(0)
 				&& position.y >= 0 && position.y < board.GetLength(1);
 		}
 	}

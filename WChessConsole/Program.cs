@@ -74,11 +74,17 @@ namespace WChessConsole
 				positionVector = new Vector2I(int.Parse(ints[0]) - 1, int.Parse(ints[1]) - 1);
 				return true;
 			}
-			else
+			else if (ints.Length == 1)
 			{
-				positionVector = new Vector2I(int.MaxValue, int.MaxValue);
-				return false;
+				if (ints[0].Length == 2)
+				{
+					positionVector = new Vector2I(ints[0][0] - 97, int.Parse("" + ints[0][1]) - 1);
+					return true;
+				}
 			}
+
+			positionVector = new Vector2I(int.MaxValue, int.MaxValue);
+			return false;
 		}
 	}
 }

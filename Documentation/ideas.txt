@@ -49,3 +49,4 @@ MovementAbility
 
 INSTEAD OF ADDING ALL SORTS OF VARIABLES/FLAGS TO MOVE CLASS, SUBCLASS AND ADD makemove(Game) AND toString() FUNCTIONS 
 top-level base class would have origin and destination for easy comparisons? add MoveFactory(Game game, string move) to calculate special things from algebraic notation)
+add an enum to each move to specify the type of physical move (slide, jump, exchange) and a translator (the GamePieceManager or whatever) will decide what to apply to the pieces

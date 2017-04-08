@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbilityDiagonalMove.cs" />
+    <Compile Include="AbilityRankFileMove.cs" />
     <Compile Include="IAbility.cs" />
     <Compile Include="AbilityKnightJump.cs" />
     <Compile Include="AbilityPawn.cs" />
