@@ -1,0 +1,18 @@
+################################################################################
+Saturday, April 8, 2017
+--------------------------------------------------------------------------------
+- added en passant, castling
+- added better error-checking to input
+- added ability to undo moves
+- started development log
+
+################################################################################
+Friday, April 7, 2017
+--------------------------------------------------------------------------------
+- initial chess game setup
+- refactored piece types as a single Piece class with attached abilities
+
+################################################################################
+Wednesday, April 5, 2017
+--------------------------------------------------------------------------------
+- created console application project for testing chess logic

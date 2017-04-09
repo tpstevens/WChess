@@ -35,7 +35,7 @@ namespace WChessConsole
 					targetPiece = game.GetPiece(targetPosition);
 					if (targetPiece == null || targetPiece.TeamID != piece.TeamID)
 					{
-						moves.Add(new Move(piece.Position, targetPosition, piece.TeamID));
+						moves.Add(new Move(piece.Position, targetPosition, piece.TeamID, targetPiece));
 						if (targetPiece != null)
 							break;
 					}

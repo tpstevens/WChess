@@ -33,13 +33,22 @@ namespace WChessConsole
 
 			do
 			{
-				Console.Write("Enter a move (in algebraic notation) or 'q' to quit: ");
+				Console.Write("Enter a move (in algebraic notation), 'u' to undo, or 'q' to quit: ");
 				input = Console.ReadLine().Trim().ToLower();
 
-				if (input == "q")
+				if (input == "d")
+				{
+					// TODO: debug mode (must be at start? or can't disable debug mode after enabled until new game)
+				}
+				else if (input == "q")
 				{
 					continueGame = false;
 					validInput = true;
+				}
+				else if (input == "u")
+				{
+					validInput = true;
+					game.UndoPlayerMove();
 				}
 				else
 				{
@@ -47,14 +56,14 @@ namespace WChessConsole
 
 					if (splitInput.Length == 1 && splitInput[0].Length > 0)
 					{
-						validInput = game.MakeMove(splitInput[0]);
+						validInput = game.PlayerMove(splitInput[0]);
 					}
 					else if (splitInput.Length == 2)
 					{
 						if (parsePosition(splitInput[0], out positionPair.first)
 							&& parsePosition(splitInput[1], out positionPair.second))
 						{
-							validInput = game.MakeMove(positionPair.first, positionPair.second);
+							validInput = game.PlayerMove(positionPair.first, positionPair.second);
 						}
 					}
 				}

@@ -24,7 +24,7 @@ namespace WChessConsole
                 Vector2I targetPosition = piece.Position + combinations[i];
                 Piece targetPiece = game.GetPiece(targetPosition);
                 if (targetPiece == null || targetPiece.TeamID != piece.TeamID)
-                    moves.Add(new Move(piece.Position, targetPosition, piece.TeamID));
+                    moves.Add(new Move(piece.Position, targetPosition, piece.TeamID, targetPiece));
             }
 
             return moves;

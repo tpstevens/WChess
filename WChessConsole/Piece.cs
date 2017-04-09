@@ -83,6 +83,12 @@ namespace WChessConsole
 			++numMoves;
 		}
 
+		public void UndoMove(Vector2I origin)
+		{
+			position = origin;
+			--numMoves;
+		}
+
         public Move ValidateMove(Game game, Vector2I destination)
         {
             GeneratePotentialMoves(game);

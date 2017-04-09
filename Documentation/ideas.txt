@@ -1,11 +1,18 @@
-want to separate piece logic into classes
-can give them access to an interface of the board
-pieces need way to get access to their environment
-for AI purposes, we'll want to consolidate all potential moves...may not be important for this though
+################################################################################
+TODO
+--------------------------------------------------------------------------------
+- add special undo flags to save games (and when exporting, give option save in
+  pure notation)
+- add reasons why move was denied (space is empty/enemy, king would be in check,
+  etc)
 
+################################################################################
+NOTES
+--------------------------------------------------------------------------------
 Move types:
 slide - all squares in path must be open, piece may capture enemy on end square
 jump - only destination must be open or enemy
+exchange - pieces move past each other
 
 Pawn:
 Slide one square ahead
@@ -35,7 +42,7 @@ Slide along rank/files
 King:
 Slide along diagonals (limit 1)
 Slide along rank/files (limit 1)
-Castle
+Exchange with rook
 	- must be king's first move
 	- must be corresponding rook's first move
 	- king must not be in check or pass over any threatened squares
@@ -50,3 +57,4 @@ MovementAbility
 INSTEAD OF ADDING ALL SORTS OF VARIABLES/FLAGS TO MOVE CLASS, SUBCLASS AND ADD makemove(Game) AND toString() FUNCTIONS 
 top-level base class would have origin and destination for easy comparisons? add MoveFactory(Game game, string move) to calculate special things from algebraic notation)
 add an enum to each move to specify the type of physical move (slide, jump, exchange) and a translator (the GamePieceManager or whatever) will decide what to apply to the pieces
+

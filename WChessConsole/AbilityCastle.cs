@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace WChessConsole
 {
@@ -26,7 +23,7 @@ namespace WChessConsole
 
             if (piece.PieceType == 'K' && piece.NumMoves == 0)
             {
-                // C heck kingside castle
+                // Check kingside castle
                 valid = true;
                 rook = game.GetPiece(7, piece.Position.y);
                 if (rook.TeamID == piece.TeamID && rook.NumMoves == 0)
@@ -42,7 +39,7 @@ namespace WChessConsole
 
                     if (valid)
                     {
-                        moves.Add(new Move(piece.Position, piece.Position + new Vector2I(2, 0), piece.TeamID, false, true));
+                        moves.Add(new Move(piece.Position, piece.Position + new Vector2I(2, 0), piece.TeamID, null, false, true));
                     }
                 }
 
@@ -62,7 +59,7 @@ namespace WChessConsole
 
                     if (valid)
                     {
-                        moves.Add(new Move(piece.Position, piece.Position + new Vector2I(-2, 0), piece.TeamID, false, false, false));
+                        moves.Add(new Move(piece.Position, piece.Position + new Vector2I(-2, 0), piece.TeamID, null, false, false, false));
                     }
                 }
             }
