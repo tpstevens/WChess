@@ -1,0 +1,7 @@
+- add special undo flags to save games (and when exporting, give option save in pure notation)
+- add reasons why move was denied (space is empty/enemy, king would be in check, etc)
+- need to calculate all available moves before player's turn to properly indicate check/stalemate
+- time all move operations to check if I should move logic to another thread
+- add debug mode option to a game for better statistics printing, no move restrictions, etc
+- add ability to load game
+- add game-ending conditions

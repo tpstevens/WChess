@@ -1,12 +1,4 @@
 ################################################################################
-TODO
---------------------------------------------------------------------------------
-- add special undo flags to save games (and when exporting, give option save in
-  pure notation)
-- add reasons why move was denied (space is empty/enemy, king would be in check,
-  etc)
-
-################################################################################
 NOTES
 --------------------------------------------------------------------------------
 Move types:

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace WChessConsole
 {
@@ -10,6 +11,11 @@ namespace WChessConsole
         public readonly Vector2I MoveDirection;
 
         // Public properties
+		public bool Active
+		{
+			get { return active; }
+		}
+
         public uint NumMoves
         {
             get { return numMoves; }
@@ -23,6 +29,7 @@ namespace WChessConsole
 		// Private member variables
         private readonly List<IAbility> abilityList;
 
+		private bool active = true;
         private HashSet<Move> potentialMoves;
         private uint numMoves = 0;
 		private Vector2I position;
@@ -62,6 +69,8 @@ namespace WChessConsole
 		////////////////////////////////////////////////////////////////////////
         public void GeneratePotentialMoves(Game game)
         {
+			Debug.Assert(Active);
+
             potentialMoves.Clear();
 
             foreach (IAbility a in abilityList)
@@ -79,8 +88,29 @@ namespace WChessConsole
 
 		public void Move(Vector2I destination)
 		{
+			Debug.Assert(Active);
+
 			position = destination;
 			++numMoves;
+		}
+
+		public void SetActive(bool active)
+		{
+			this.active = active;
+		}
+
+		public bool ThreateningEnemyKing(Game game)
+		{
+			Vector2I kingPosition = game.GetKingPosition((TeamID + 1) % 2);
+
+			GeneratePotentialMoves(game);
+			foreach(Move m in potentialMoves)
+			{
+				if (m.destination == kingPosition)
+					return true;
+			}
+
+			return false;
 		}
 
 		public void UndoMove(Vector2I origin)
@@ -91,7 +121,9 @@ namespace WChessConsole
 
         public Move ValidateMove(Game game, Vector2I destination)
         {
-            GeneratePotentialMoves(game);
+			Debug.Assert(Active);
+
+			GeneratePotentialMoves(game);
 
             foreach (Move m in potentialMoves)
             {

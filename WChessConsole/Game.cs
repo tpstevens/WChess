@@ -6,6 +6,7 @@ namespace WChessConsole
 {
 	class Game
 	{
+		private List<Piece>[] pieces;
 		private Move temporaryMove;
 		private Piece[,] board;
         private Stack<Move> moveHistory;
@@ -19,41 +20,46 @@ namespace WChessConsole
 		public Game(uint width, uint height)
 		{
 			board = new Piece[width, height];
+
+			pieces = new List<Piece>[2];
+			pieces[0] = new List<Piece>();
+			pieces[1] = new List<Piece>();
+
             moveHistory = new Stack<Move>();
 			temporaryMove = null;
 
 			// add pawns
 			for (int x = 0; x < width; ++x)
 			{
-				setPosition(x, 1, PieceFactory.CreateClassicPawn(0, new Vector2I(x, 1)));
-				setPosition(x, (int)height - 2, PieceFactory.CreateClassicPawn(1, new Vector2I(x, (int)height - 2)));
+				pieces[0].Add(setPosition(x, 1, PieceFactory.CreateClassicPawn(0, new Vector2I(x, 1))));
+				pieces[1].Add(setPosition(x, (int)height - 2, PieceFactory.CreateClassicPawn(1, new Vector2I(x, (int)height - 2))));
 			}
 
 			// add knights
-			setPosition(1, 0, PieceFactory.CreateClassicKnight(0, new Vector2I(1, 0)));
-			setPosition(6, 0, PieceFactory.CreateClassicKnight(0, new Vector2I(6, 0)));
-			setPosition(1, 7, PieceFactory.CreateClassicKnight(1, new Vector2I(1, 7)));
-			setPosition(6, 7, PieceFactory.CreateClassicKnight(1, new Vector2I(6, 7)));
+			pieces[0].Add(setPosition(1, 0, PieceFactory.CreateClassicKnight(0, new Vector2I(1, 0))));
+			pieces[0].Add(setPosition(6, 0, PieceFactory.CreateClassicKnight(0, new Vector2I(6, 0))));
+			pieces[1].Add(setPosition(1, 7, PieceFactory.CreateClassicKnight(1, new Vector2I(1, 7))));
+			pieces[1].Add(setPosition(6, 7, PieceFactory.CreateClassicKnight(1, new Vector2I(6, 7))));
 
 			// add bishops
-			setPosition(2, 0, PieceFactory.CreateClassicBishop(0, new Vector2I(2, 0)));
-			setPosition(5, 0, PieceFactory.CreateClassicBishop(0, new Vector2I(5, 0)));
-			setPosition(2, 7, PieceFactory.CreateClassicBishop(1, new Vector2I(2, 7)));
-			setPosition(5, 7, PieceFactory.CreateClassicBishop(1, new Vector2I(5, 7)));
+			pieces[0].Add(setPosition(2, 0, PieceFactory.CreateClassicBishop(0, new Vector2I(2, 0))));
+			pieces[0].Add(setPosition(5, 0, PieceFactory.CreateClassicBishop(0, new Vector2I(5, 0))));
+			pieces[1].Add(setPosition(2, 7, PieceFactory.CreateClassicBishop(1, new Vector2I(2, 7))));
+			pieces[1].Add(setPosition(5, 7, PieceFactory.CreateClassicBishop(1, new Vector2I(5, 7))));
 
 			// add rooks
-			setPosition(0, 0, PieceFactory.CreateClassicRook(0, new Vector2I(0, 0)));
-			setPosition(7, 0, PieceFactory.CreateClassicRook(0, new Vector2I(7, 0)));
-			setPosition(0, 7, PieceFactory.CreateClassicRook(1, new Vector2I(0, 7)));
-			setPosition(7, 7, PieceFactory.CreateClassicRook(1, new Vector2I(7, 7)));
+			pieces[0].Add(setPosition(0, 0, PieceFactory.CreateClassicRook(0, new Vector2I(0, 0))));
+			pieces[0].Add(setPosition(7, 0, PieceFactory.CreateClassicRook(0, new Vector2I(7, 0))));
+			pieces[1].Add(setPosition(0, 7, PieceFactory.CreateClassicRook(1, new Vector2I(0, 7))));
+			pieces[1].Add(setPosition(7, 7, PieceFactory.CreateClassicRook(1, new Vector2I(7, 7))));
 
 			// add queens
-			setPosition(3, 0, PieceFactory.CreateClassicQueen(0, new Vector2I(3, 0)));
-			setPosition(3, 7, PieceFactory.CreateClassicQueen(1, new Vector2I(3, 7)));
+			pieces[0].Add(setPosition(3, 0, PieceFactory.CreateClassicQueen(0, new Vector2I(3, 0))));
+			pieces[1].Add(setPosition(3, 7, PieceFactory.CreateClassicQueen(1, new Vector2I(3, 7))));
 
 			// add kings
-			setPosition(4, 0, PieceFactory.CreateClassicKing(0, new Vector2I(4, 0)));
-			setPosition(4, 7, PieceFactory.CreateClassicKing(1, new Vector2I(4, 7)));
+			pieces[0].Add(setPosition(4, 0, PieceFactory.CreateClassicKing(0, new Vector2I(4, 0))));
+			pieces[1].Add(setPosition(4, 7, PieceFactory.CreateClassicKing(1, new Vector2I(4, 7))));
 		}
 
 		////////////////////////////////////////////////////////////////////////
@@ -64,6 +70,15 @@ namespace WChessConsole
         {
             // TODO - for displaying threats...
         }
+
+		public Vector2I GetKingPosition(uint teamID)
+		{
+			foreach (Piece p in pieces[teamID])
+				if (p.PieceType == 'K')
+					return p.Position;
+
+			return new Vector2I();
+		}
 
         public Move GetLastMove()
         {
@@ -88,21 +103,38 @@ namespace WChessConsole
 
 		public bool PlayerMove(Vector2I origin, Vector2I destination)
 		{
+			bool validMove = true;
 			Move move;
 			Piece piece;
 
 			if ((piece = GetPiece(origin)) != null
 				&& piece.TeamID == nextTeamID
-				&& (move = piece.ValidateMove(this, destination)) != null
-				&& movePieces(move))
+				&& (move = piece.ValidateMove(this, destination)) != null)
 			{
-				nextTeamID = (nextTeamID + 1) % 2;
-				if (nextTeamID == 0)
-					++turnNumber;
+				if (makeTemporaryMove(move))
+				{
+					uint enemyID = (nextTeamID + 1) % 2;
 
-                moveHistory.Push(move);
+					foreach (Piece p in pieces[enemyID])
+					{
+						if (p.Active && p.ThreateningEnemyKing(this))
+						{
+							Console.WriteLine("Invalid move: piece " + p.GetTwoCharRepresentation() + " is threatening the king");
+							validMove = false;
+						}
+					}
 
-				return true;
+					undoTemporaryMove(validMove);
+
+					if (validMove)
+					{
+						nextTeamID = (nextTeamID + 1) % 2;
+						if (nextTeamID == 0)
+							++turnNumber;
+					}
+				}
+
+				return validMove;
 			}
 
 			return false;
@@ -157,6 +189,8 @@ namespace WChessConsole
 			}
 
 			nextTeamID = (nextTeamID + 1) % 2;
+			if (nextTeamID != 0)
+				--turnNumber;
 
 			return undoMovePieces(moveHistory.Pop());
 		}
@@ -188,17 +222,19 @@ namespace WChessConsole
 			clearPosition(v.x, v.y);
 		}
 
-		private bool MakeTemporaryMove(Move move)
+		private bool makeTemporaryMove(Move move)
 		{
-			if (move == null)
+			if (move == null || !movePieces(move))
 				return false;
 
-			// TODO implement
-			return false;
+			temporaryMove = move;
+			return true;
 		}
 
 		private bool movePieces(Move move)
 		{
+			Debug.Assert(temporaryMove == null, "Cannot move pieces while a temporary move has been applied!");
+
 			Piece piece = GetPiece(move.origin);
 			if (piece == null)
 				return false;
@@ -234,18 +270,22 @@ namespace WChessConsole
 				clearPosition(0, move.destination.y);
 			}
 
+			if (move.capturedPiece != null)
+				move.capturedPiece.SetActive(false);
+
 			return true;
 		}
 
-		private void setPosition(int x, int y, Piece piece)
+		private Piece setPosition(int x, int y, Piece piece)
 		{
 			Debug.Assert(ValidatePosition(x, y));
 			board[x, y] = piece;
+			return piece;
 		}
 
-		private void setPosition(Vector2I v, Piece piece)
+		private Piece setPosition(Vector2I v, Piece piece)
 		{
-			setPosition(v.x, v.y, piece);
+			return setPosition(v.x, v.y, piece);
 		}
 
 		private bool undoMovePieces(Move move)
@@ -288,16 +328,30 @@ namespace WChessConsole
 			if (move.capturedPiece != null)
 				setPosition(move.capturedPiece.Position, move.capturedPiece);
 
+			if (move.capturedPiece != null)
+				move.capturedPiece.SetActive(true);
+
 			return true;
 		}
 
-		private bool undoTemporaryMove()
+		private bool undoTemporaryMove(bool setAsFinal)
 		{
 			if (temporaryMove == null)
 				return false;
-
-			if (undoMovePieces(temporaryMove))
+			
+			if (setAsFinal)
+			{
+				moveHistory.Push(temporaryMove);
 				temporaryMove = null;
+			}
+			else if (undoMovePieces(temporaryMove))
+			{
+				temporaryMove = null;
+			}
+			else
+			{
+				Console.WriteLine("ERROR: Failed to undo temporary move.");
+			}
 
 			return false;
 		}
