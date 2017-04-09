@@ -68,23 +68,29 @@ namespace WChessConsole
 
 		private static bool parsePosition(string positionString, out Vector2I positionVector)
 		{
+            int x, y;
 			string[] ints = positionString.Trim().Split(',');
-			if (ints.Length == 2)
-			{
-				positionVector = new Vector2I(int.Parse(ints[0]) - 1, int.Parse(ints[1]) - 1);
-				return true;
-			}
-			else if (ints.Length == 1)
-			{
-				if (ints[0].Length == 2)
-				{
-					positionVector = new Vector2I(ints[0][0] - 97, int.Parse("" + ints[0][1]) - 1);
-					return true;
-				}
-			}
 
-			positionVector = new Vector2I(int.MaxValue, int.MaxValue);
-			return false;
+			if (ints.Length == 2
+                && int.TryParse(ints[0], out x)
+                && int.TryParse(ints[1], out y))
+			{
+                positionVector = new Vector2I(int.Parse(ints[0]) - 1, int.Parse(ints[1]) - 1);
+                return true;
+			}
+			else if (ints.Length == 1
+                && ints[0].Length == 2
+                && int.TryParse("" + ints[0][1], out y))
+			{
+                x = ints[0][0] - 97;
+                positionVector = new Vector2I(x, y - 1);
+                return true;
+            }
+            else
+            {
+			    positionVector = new Vector2I(int.MaxValue, int.MaxValue);
+			    return false;
+            }
 		}
 	}
 }

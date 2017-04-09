@@ -34,6 +34,11 @@
             return new Vector2I(a.x + b.x, a.y + b.y);
         }
 
+        public static Vector2I operator-(Vector2I a, Vector2I b)
+        {
+            return new Vector2I(a.x - b.x, a.y - b.y);
+        }
+
         public static Vector2I operator*(Vector2I v, int i)
         {
             return new Vector2I(v.x * i, v.y * i);

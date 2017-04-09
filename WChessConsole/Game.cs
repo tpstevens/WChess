@@ -92,16 +92,40 @@ namespace WChessConsole
 				&& piece.TeamID == nextTeamID
 				&& (move = piece.ValidateMove(this, destination)) != null)
 			{
-				// Remove enemy piece if captured - TODO
-				
 				// Move current piece
 				piece.Move(destination);
 				board[destination.x, destination.y] = piece;
 				board[origin.x, origin.y] = null;
 
+                // Handle en passant capture
+                if (move.enPassant)
+                {
+                    board[GetLastMove().destination.x, GetLastMove().destination.y] = null;
+                }
+
+                // Handle castling
+                if (move.kingsideCastle)
+                {
+                    Piece rook = GetPiece(7, move.destination.y);
+                    Vector2I rookDestination = new Vector2I(5, move.destination.y);
+                    rook.Move(rookDestination);
+                    board[rookDestination.x, rookDestination.y] = rook;
+                    board[7, move.destination.y] = null;
+                }
+                else if (move.queensideCastle)
+                {
+                    Piece rook = GetPiece(0, move.destination.y);
+                    Vector2I rookDestination = new Vector2I(3, move.destination.y);
+                    rook.Move(rookDestination);
+                    board[rookDestination.x, rookDestination.y] = rook;
+                    board[0, move.destination.y] = null;
+                }
+
 				nextTeamID = (nextTeamID + 1) % 2;
 				if (nextTeamID == 0)
 					++turnNumber;
+
+                moveHistory.Push(move);
 
 				return true;
 			}

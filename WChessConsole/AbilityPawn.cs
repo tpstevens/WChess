@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace WChessConsole
 {
@@ -34,6 +35,26 @@ namespace WChessConsole
             if (game.GetPiece(targetPosition) != null && game.GetPiece(targetPosition).TeamID != piece.TeamID)
             {
                 moves.Add(new Move(piece.Position, targetPosition, piece.TeamID));
+            }
+
+            // check en passant
+            Move lastEnemyMove = game.GetLastMove();
+            if (lastEnemyMove != null
+                && (lastEnemyMove.destination == piece.Position + new Vector2I(1, 0)
+                    || lastEnemyMove.destination == piece.Position + new Vector2I(-1, 0)))
+            {
+                Piece movedPiece = game.GetPiece(lastEnemyMove.destination);
+                Debug.Assert(movedPiece != null);
+
+                if (movedPiece.PieceType == 'P') // need better way to separate piece type definition
+                {
+                    Vector2I moveDelta = lastEnemyMove.destination - lastEnemyMove.origin;
+                    if (Utilities.Abs(moveDelta.y) == 2
+                        && game.GetPiece(lastEnemyMove.destination + piece.MoveDirection) == null)
+                    {
+                        moves.Add(new Move(piece.Position, lastEnemyMove.destination + piece.MoveDirection, piece.TeamID, true));
+                    }
+                }
             }
 
             // TODO: check en passant and promotion (how to represent in move?)

@@ -4,6 +4,7 @@ namespace WChessConsole
 {
     class PieceFactory
     {
+        private static readonly AbilityCastle kingCastle = new AbilityCastle();
 		private static readonly AbilityDiagonalMove diagonalLimited = new AbilityDiagonalMove(1);
 		private static readonly AbilityDiagonalMove diagonalUnlimited = new AbilityDiagonalMove();
 		private static readonly AbilityKnightJump knightJump = new AbilityKnightJump();
@@ -21,6 +22,7 @@ namespace WChessConsole
 			List<IAbility> abilityList = new List<IAbility>();
 			abilityList.Add(diagonalLimited);
 			abilityList.Add(rankFileLimited);
+            abilityList.Add(kingCastle);
 			return new Piece(teamID, 'K', position, abilityList);
 		}
 
