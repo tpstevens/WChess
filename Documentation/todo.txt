@@ -3,5 +3,6 @@
 - need to calculate all available moves before player's turn to properly indicate check/stalemate
 - time all move operations to check if I should move logic to another thread
 - add debug mode option to a game for better statistics printing, no move restrictions, etc
-- add ability to load game
+- add ability to export game to algebraic notation, import algebraic notation or piece map
 - add game-ending conditions
+- pawn promotion rules
