@@ -4,6 +4,6 @@ namespace WChessConsole
 {
     interface IAbility
     {
-        List<Move> GeneratePotentialMoves(Game game, Piece piece);
+        List<Move> GeneratePotentialMoves(GameBoard board, Piece piece);
     }
 }

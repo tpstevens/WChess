@@ -43,6 +43,9 @@
     <Compile Include="AbilityCastle.cs" />
     <Compile Include="AbilityDiagonalMove.cs" />
     <Compile Include="AbilityRankFileMove.cs" />
+    <Compile Include="EventLog.cs" />
+    <Compile Include="FileUtilities.cs" />
+    <Compile Include="GameBoard.cs" />
     <Compile Include="IAbility.cs" />
     <Compile Include="AbilityKnightJump.cs" />
     <Compile Include="AbilityPawn.cs" />

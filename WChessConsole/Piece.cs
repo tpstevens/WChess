@@ -3,10 +3,13 @@ using System.Diagnostics;
 
 namespace WChessConsole
 {
+	enum ePieceType { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING };
+
 	class Piece
 	{
+
         // Public member variables
-        public readonly char PieceType;
+        public readonly ePieceType PieceType;
 		public readonly uint TeamID;
         public readonly Vector2I MoveDirection;
 
@@ -37,7 +40,7 @@ namespace WChessConsole
 		////////////////////////////////////////////////////////////////////////
 		// Constructor
 		////////////////////////////////////////////////////////////////////////
-        public Piece(uint teamID, char pieceType, Vector2I position, IAbility ability)
+        public Piece(uint teamID, ePieceType pieceType, Vector2I position, IAbility ability)
         {
             this.position = position;
 
@@ -52,7 +55,7 @@ namespace WChessConsole
         }
 
 
-        public Piece(uint teamID, char pieceType, Vector2I position, List<IAbility> abilityList = null)
+        public Piece(uint teamID, ePieceType pieceType, Vector2I position, List<IAbility> abilityList = null)
 		{
             this.abilityList = (abilityList != null) ? abilityList : new List<IAbility>();
 			this.position = position;
@@ -67,7 +70,7 @@ namespace WChessConsole
 		////////////////////////////////////////////////////////////////////////
 		// Public functions
 		////////////////////////////////////////////////////////////////////////
-        public void GeneratePotentialMoves(Game game)
+        public void GeneratePotentialMoves(GameBoard board)
         {
 			Debug.Assert(Active);
 
@@ -75,7 +78,7 @@ namespace WChessConsole
 
             foreach (IAbility a in abilityList)
             {
-                List<Move> abilityMoves = a.GeneratePotentialMoves(game, this);
+                List<Move> abilityMoves = a.GeneratePotentialMoves(board, this);
                 foreach (Move m in abilityMoves)
                     potentialMoves.Add(m);
             }
@@ -83,7 +86,7 @@ namespace WChessConsole
 
         public string GetTwoCharRepresentation()
         {
-            return string.Format("{0}{1}", TeamID == 0 ? "w" : "b", PieceType);
+            return string.Format("{0}{1}", TeamID == 0 ? "w" : "b", convertPieceTypeToChar());
         }
 
 		public void Move(Vector2I destination)
@@ -99,11 +102,11 @@ namespace WChessConsole
 			this.active = active;
 		}
 
-		public bool ThreateningEnemyKing(Game game)
+		public bool ThreateningEnemyKing(GameBoard board)
 		{
-			Vector2I kingPosition = game.GetKingPosition((TeamID + 1) % 2);
+			Vector2I kingPosition = board.GetKingPosition((TeamID + 1) % 2);
 
-			GeneratePotentialMoves(game);
+			GeneratePotentialMoves(board);
 			foreach(Move m in potentialMoves)
 			{
 				if (m.destination == kingPosition)
@@ -119,11 +122,11 @@ namespace WChessConsole
 			--numMoves;
 		}
 
-        public Move ValidateMove(Game game, Vector2I destination)
+        public Move ValidateMove(GameBoard board, Vector2I destination)
         {
 			Debug.Assert(Active);
 
-			GeneratePotentialMoves(game);
+			GeneratePotentialMoves(board);
 
             foreach (Move m in potentialMoves)
             {
@@ -133,5 +136,26 @@ namespace WChessConsole
 
             return null;
         }
+
+		private char convertPieceTypeToChar()
+		{
+			switch (PieceType)
+			{
+				case ePieceType.BISHOP:
+					return 'B';
+				case ePieceType.KING:
+					return 'K';
+				case ePieceType.KNIGHT:
+					return 'N';
+				case ePieceType.PAWN:
+					return 'P';
+				case ePieceType.QUEEN:
+					return 'Q';
+				case ePieceType.ROOK:
+					return 'R';
+				default:
+					return ' ';
+			}
+		}
 	}
 }

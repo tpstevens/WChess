@@ -15,22 +15,22 @@ namespace WChessConsole
             new Vector2I(-1, -2)
         };
 
-        public List<Move> GeneratePotentialMoves(Game game, Piece piece)
+        public List<Move> GeneratePotentialMoves(GameBoard board, Piece piece)
         {
             bool valid;
             List<Move> moves = new List<Move>();
             Piece rook;
 
-            if (piece.PieceType == 'K' && piece.NumMoves == 0)
+            if (piece.PieceType == ePieceType.KING && piece.NumMoves == 0)
             {
                 // Check kingside castle
                 valid = true;
-                rook = game.GetPiece(7, piece.Position.y);
+                rook = board.GetPieceAt(7, piece.Position.y);
                 if (rook.TeamID == piece.TeamID && rook.NumMoves == 0)
                 {
                     for (int i = 1; i <= 2; ++i)
                     {
-                        if (game.GetPiece(piece.Position + new Vector2I(i, 0)) != null)
+                        if (board.GetPieceAt(piece.Position + new Vector2I(i, 0)) != null)
                         {
                             valid = false;
                             break;
@@ -45,12 +45,12 @@ namespace WChessConsole
 
                 // Check queenside castle
                 valid = true;
-                rook = game.GetPiece(0, piece.Position.y);
+                rook = board.GetPieceAt(0, piece.Position.y);
                 if (rook.TeamID == piece.TeamID && rook.NumMoves == 0)
                 {
                     for (int i = 1; i <= 3; ++i)
                     {
-                        if (game.GetPiece(piece.Position - new Vector2I(i, 0)) != null)
+                        if (board.GetPieceAt(piece.Position - new Vector2I(i, 0)) != null)
                         {
                             valid = false;
                             break;

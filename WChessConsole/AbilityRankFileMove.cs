@@ -18,7 +18,7 @@ namespace WChessConsole
 			this.distanceLimit = distanceLimit;
 		}
 
-		public List<Move> GeneratePotentialMoves(Game game, Piece piece)
+		public List<Move> GeneratePotentialMoves(GameBoard board, Piece piece)
 		{
 			List<Move> moves = new List<Move>();
 			Piece targetPiece;
@@ -30,9 +30,9 @@ namespace WChessConsole
 				targetPosition = piece.Position + combinations[i];
 
 				distanceChecked = 0;
-				while (game.ValidatePosition(targetPosition) && ++distanceChecked <= distanceLimit)
+				while (board.ValidatePosition(targetPosition) && ++distanceChecked <= distanceLimit)
 				{
-					targetPiece = game.GetPiece(targetPosition);
+					targetPiece = board.GetPieceAt(targetPosition);
 					if (targetPiece == null || targetPiece.TeamID != piece.TeamID)
 					{
 						moves.Add(new Move(piece.Position, targetPosition, piece.TeamID, targetPiece));

@@ -14,7 +14,7 @@ namespace WChessConsole
 
 		public static Piece CreateClassicBishop(uint teamID, Vector2I position)
 		{
-			return new Piece(teamID, 'B', position, diagonalUnlimited);
+			return new Piece(teamID, ePieceType.BISHOP, position, diagonalUnlimited);
 		}
 
 		public static Piece CreateClassicKing(uint teamID, Vector2I position)
@@ -23,17 +23,17 @@ namespace WChessConsole
 			abilityList.Add(diagonalLimited);
 			abilityList.Add(rankFileLimited);
             abilityList.Add(kingCastle);
-			return new Piece(teamID, 'K', position, abilityList);
+			return new Piece(teamID, ePieceType.KING, position, abilityList);
 		}
 
 		public static Piece CreateClassicKnight(uint teamID, Vector2I position)
 		{
-			return new Piece(teamID, 'N', position, knightJump);
+			return new Piece(teamID, ePieceType.KNIGHT, position, knightJump);
 		}
 
         public static Piece CreateClassicPawn(uint teamID, Vector2I position)
         {
-            return new Piece(teamID, 'P', position, pawnAbilities);
+            return new Piece(teamID, ePieceType.PAWN, position, pawnAbilities);
         }
 
 		public static Piece CreateClassicQueen(uint teamID, Vector2I position)
@@ -41,12 +41,12 @@ namespace WChessConsole
 			List<IAbility> abilityList = new List<IAbility>();
 			abilityList.Add(diagonalUnlimited);
 			abilityList.Add(rankFileUnlimited);
-			return new Piece(teamID, 'Q', position, abilityList);
+			return new Piece(teamID, ePieceType.QUEEN, position, abilityList);
 		}
 
 		public static Piece CreateClassicRook(uint teamID, Vector2I position)
 		{
-			return new Piece(teamID, 'R', position, rankFileUnlimited);
+			return new Piece(teamID, ePieceType.ROOK, position, rankFileUnlimited);
 		}
     }
 }

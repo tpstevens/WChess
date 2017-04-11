@@ -15,16 +15,19 @@ namespace WChessConsole
             new Vector2I(-1, -2)
         };
 
-        public List<Move> GeneratePotentialMoves(Game game, Piece piece)
+        public List<Move> GeneratePotentialMoves(GameBoard board, Piece piece)
         {
             List<Move> moves = new List<Move>();
 
             for (int i = 0; i < combinations.Length; ++i)
             {
                 Vector2I targetPosition = piece.Position + combinations[i];
-                Piece targetPiece = game.GetPiece(targetPosition);
-                if (targetPiece == null || targetPiece.TeamID != piece.TeamID)
-                    moves.Add(new Move(piece.Position, targetPosition, piece.TeamID, targetPiece));
+				if (board.ValidatePosition(targetPosition))
+				{
+					Piece targetPiece = board.GetPieceAt(targetPosition);
+					if (targetPiece == null || targetPiece.TeamID != piece.TeamID)
+					    moves.Add(new Move(piece.Position, targetPosition, piece.TeamID, targetPiece));
+				}
             }
 
             return moves;

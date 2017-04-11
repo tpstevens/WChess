@@ -1,7 +1,14 @@
 ################################################################################
+Monday, April 10, 2017
+--------------------------------------------------------------------------------
+- Moved all piece positioning and move history to a new GameBoard class to avoid
+  exposing game internals to other methods
+
+################################################################################
 Sunday, April 9, 2017
 --------------------------------------------------------------------------------
 - 0.2.0 release: moves now check for if the king will be in check after
+- added log with new condition for asserts
 
 ################################################################################
 Saturday, April 8, 2017
